@@ -205,3 +205,16 @@ are fully playable; mouse behavior may differ slightly from the Linux experience
 - **Wiki:** https://wiki.retro-exo.com
 
 This macOS patch is a community contribution to the eXoDOS project.
+
+---
+
+## Acknowledgements
+
+This patch would not exist without the foundational work of the **eXoDOS team** —
+the game configurations, per-game DOSBox settings, installation scripts, and the
+Linux patch that this macOS patch builds directly on top of. All of the hard work
+of curating, configuring, and testing 7,666 games is theirs.
+
+- **eXoDOS project:** https://www.retro-exo.com
+- **eXoDOS on Internet Archive:** https://archive.org/details/eXoDOS_v6
+
