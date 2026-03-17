@@ -76,58 +76,10 @@ On **Apple Silicon**, Rosetta 2 is installed automatically if not already presen
 
 ### 5. Launch the GUI
 
-Double-click **`exogui.command`**.
+Double-click **`exogui.command`** to open eXoGUI.
 
-On first launch, PyQt6 is installed automatically (requires an internet connection;
-takes about 30 seconds). Subsequent launches are instant.
-
----
-
-## The GUI — eXoGUI
-
-eXoGUI is a native Python/PyQt6 desktop application for browsing, installing,
-and playing the eXoDOS collection on macOS.
-
-### Browsing
-
-- **Search bar** — filter games by title, genre, developer, or year
-- **Filter dropdowns** — narrow by genre, release year, or installed status
-- **Game detail panel** — click any game to see box art, screenshots, description,
-  developer, year, genre, and content rating
-
-### Installing a game
-
-Click **Install** to extract the game's ZIP archive into the `eXo/eXoDOS/` data folder.
-Most games install in a few seconds; larger titles (with CD images) take longer.
-
-### Playing a game
-
-Click **Play** once a game is installed. DOSBox opens in front of the GUI.
-Close DOSBox to return to the game list.
-
-> Many games include copy-protection prompts that require a word or code from the
-> printed manual. Open the manual or reference card from the **Documents** section
-> in the game detail panel.
-
-### Videos & Documents
-
-Games with extras — manuals, reference cards, hint books, and video previews — show
-them in the **Videos & Documents** section. Click any item to open it in the default
-system application (Preview for PDFs, QuickTime for videos).
-
-### Content filter
-
-The GUI loads game metadata from `Data/Platforms/MS-DOS.xml`. The content of that
-file is determined by the filter you chose during collection setup:
-
-| Filter | Games | Description |
-|--------|------:|-------------|
-| All | 7,667 | All games including adult titles |
-| Family Friendly | 7,570 | Excludes adult (A-rated) titles |
-| Kid-Safe | 7,466 | Excludes mature and adult titles |
-
-To change the active filter: **File > Settings > Content filter**, then
-**File > Refresh Library**.
+See the [eXoGUI repository](https://github.com/NightsPaladin/exogui-pyqt) for full
+setup and usage documentation.
 
 ---
 
