@@ -1,9 +1,9 @@
 # eXoDOS v6.04 — macOS Patch
 
-> **Unofficial** — This is a community project and is not affiliated with, endorsed by,
+> **Unofficial** — This is a personal project and is not affiliated with, endorsed by,
 > or supported by the eXoDOS project or the retro-exo.com team.
 
-A community macOS patch for [eXoDOS](https://www.retro-exo.com), a curated collection
+A personal macOS patch for [eXoDOS](https://www.retro-exo.com), a curated collection
 of 7,666 pre-configured DOS games. This patch adds a native macOS launcher and working
 launch scripts for every game, with no dependency on the Linux patch.
 
@@ -204,7 +204,7 @@ are fully playable; mouse behavior may differ slightly from the Linux experience
 - **Website:** https://www.retro-exo.com/community.html
 - **Wiki:** https://wiki.retro-exo.com
 
-This macOS patch is a community contribution to the eXoDOS project.
+This macOS patch is a personal contribution to the eXoDOS project.
 
 ---
 
