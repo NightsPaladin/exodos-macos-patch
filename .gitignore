@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Backup files left by unify_scripts.py
+*.bsh.bak
+*.msh.bak
+*.command.bak
+
+# Local sync helper (path-specific to the source install)
+sync-from-source.sh

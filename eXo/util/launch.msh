@@ -1,0 +1,211 @@
+#!/usr/bin/env bash
+# launch.msh — eXoDOS macOS game launcher.
+# Sourced (not executed directly) from per-game .msh/.bsh via exo_launch.
+# Requires exported vars: gamedir, gamename, indexname, var
+# Requires exo_lib.sh already loaded (sets EXO_UTIL, EXO_DIR, etc.)
+
+# On Linux, hand off to the Linux launcher.
+[[ "$OSTYPE" == "linux-gnu"* ]] && { source "$EXO_UTIL/launch.bsh"; return; }
+
+# Ensure exo_lib.sh is loaded if this file is sourced standalone.
+[[ -z "$EXO_UTIL" ]] && source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/exo_lib.sh"
+
+# ── Apply display-preference overrides ────────────────────────────────────────
+# SEL files are written by the GUI when the user changes settings.
+_apply_sel_options() {
+    local conf="$EXO_DIR/emulators/dosbox/options_macos.conf"
+    [[ -f "$EXO_UTIL/AYES.SEL" ]] && "$_SED" -i "s|aspect=false|aspect=true|g"           "$conf"
+    [[ -f "$EXO_UTIL/ANO.SEL"  ]] && "$_SED" -i "s|aspect=true|aspect=false|g"            "$conf"
+    [[ -f "$EXO_UTIL/FULL.SEL" ]] && "$_SED" -i "s|fullscreen=false|fullscreen=true|g"    "$conf"
+    [[ -f "$EXO_UTIL/WIN.SEL"  ]] && "$_SED" -i "s|fullscreen=true|fullscreen=false|g"    "$conf"
+    [[ -f "$EXO_UTIL/SML.SEL"  ]] && "$_SED" -i "s|windowresolution=1280x960|windowresolution=640x480|g"   "$conf"
+    [[ -f "$EXO_UTIL/SML.SEL"  ]] && "$_SED" -i "s|windowresolution=2560x1920|windowresolution=640x480|g"  "$conf"
+    [[ -f "$EXO_UTIL/MED.SEL"  ]] && "$_SED" -i "s|windowresolution=640x480|windowresolution=1280x960|g"   "$conf"
+    [[ -f "$EXO_UTIL/MED.SEL"  ]] && "$_SED" -i "s|windowresolution=2560x1920|windowresolution=1280x960|g" "$conf"
+    [[ -f "$EXO_UTIL/LRG.SEL"  ]] && "$_SED" -i "s|windowresolution=640x480|windowresolution=2560x1920|g"  "$conf"
+    [[ -f "$EXO_UTIL/LRG.SEL"  ]] && "$_SED" -i "s|windowresolution=1280x960|windowresolution=2560x1920|g" "$conf"
+}
+
+# ── Language-version detection ────────────────────────────────────────────────
+# Returns true if a localised game version exists for the given lang dir (e.g. "!Chinese").
+_has_lang_version() {
+    compgen -G "$EXO_DIR/eXoDOS/!dos/$1/$gamedir/"*').msh' &>/dev/null
+}
+
+# ── Language selection menu ────────────────────────────────────────────────────
+# Sets $lang_dir and $lang_cnt. Returns 1 if the user quits.
+_lang_menu() {
+    local -a CODES=(  C          E         F          G          I           K          P          R           S        )
+    local -a NAMES=( Chinese   English    French     German    Italian     Korean     Polish     Russian    Spanish   )
+    local -a DIRS=(  '!Chinese' english  '!French'  '!German' '!Italian'  '!Korean'  '!Polish'  '!Russian' '!Spanish' )
+
+    local -a avail_codes avail_names avail_dirs
+    local i inst_dir
+
+    for (( i=0; i<${#CODES[@]}; i++ )); do
+        local d="${DIRS[$i]}"
+        if [[ "$d" == "english" ]]; then
+            grep -q ":${gamename}" "$EXO_UTIL/aria/index.txt" 2>/dev/null || continue
+        else
+            _has_lang_version "$d" || continue
+        fi
+        avail_codes+=("${CODES[$i]}")
+        avail_names+=("${NAMES[$i]}")
+        avail_dirs+=("$d")
+    done
+
+    lang_cnt=${#avail_codes[@]}
+
+    for (( i=0; i<${#avail_codes[@]}; i++ )); do
+        local d="${avail_dirs[$i]}"
+        if [[ "$d" == "english" ]]; then
+            inst_dir="$DOSBASE/$gamedir"
+        else
+            inst_dir="$EXO_DIR/eXoDOS/$d/$gamedir"
+        fi
+        if [[ -d "$inst_dir" ]]; then
+            printf "Press %s to play the %s version\n" "${avail_codes[$i]}" "${avail_names[$i]}"
+        else
+            printf "Press %s to install the %s version\n" "${avail_codes[$i]}" "${avail_names[$i]}"
+        fi
+    done
+    printf "Press X to Quit\n\n"
+
+    if [[ $lang_cnt -eq 1 ]]; then
+        lang_dir="${avail_dirs[0]}"
+        return 0
+    fi
+
+    while true; do
+        read -r -p "Please Choose: " choice
+        local upper="${choice^^}"
+        [[ "$upper" == X* ]] && return 1
+        for (( i=0; i<${#avail_codes[@]}; i++ )); do
+            if [[ "$upper" == "${avail_codes[$i]}"* ]]; then
+                lang_dir="${avail_dirs[$i]}"
+                return 0
+            fi
+        done
+        printf "Invalid input.\n"
+    done
+}
+
+# ── Prompt to install, then re-launch ────────────────────────────────────────
+# If lang_cnt > 1, return 1 (caller handles multi-lang case).
+# Returns 0 after a successful install.
+_prompt_install() {
+    if [[ $lang_cnt -gt 1 ]]; then
+        return 1
+    fi
+    printf "\nGame has not been installed.\n\n"
+    printf "Would you like to install the game?\n\n"
+    while true; do
+        read -r -p "(y/n)? " choice
+        case "${choice,,}" in
+            y*) break  ;;
+            n*) return 1 ;;
+            *)  printf "Invalid input.\n" ;;
+        esac
+    done
+    cd "$var"
+    source install.msh
+    cd "$EXO_DIR"
+    return 0
+}
+
+# ── Launch DOSBox ─────────────────────────────────────────────────────────────
+# Handles multiplayer (ip.msh), exception.msh/bsh, then exec emulator.
+_launch_dosbox() {
+    exo_find_emulator "$gamename"
+
+    # Multiplayer — write IPX network info files so the game can show them.
+    # ip.msh uses Linux-only tools (the `ip` command + a Gatekeeper-disabled check),
+    # so on macOS we gather the same info natively and write the files directly.
+    if grep -iq ":${gamename}" "$EXO_UTIL/multiplayer.txt" 2>/dev/null; then
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            cd "$DOSBASE/$gamedir/"
+            source "$EXO_UTIL/ip.msh"
+            cd "$EXO_DIR"
+        else
+            local _extip _locip
+            _extip="$(curl -4s --max-time 5 ident.me 2>/dev/null || echo "0.0.0.0")"
+            # Try common macOS interface names to find the active local IP.
+            for _iface in en0 en1 en2 en3; do
+                _locip="$(ipconfig getifaddr "$_iface" 2>/dev/null)" && [[ -n "$_locip" ]] && break
+            done
+            _locip="${_locip:-127.0.0.1}"
+            echo "$_extip" > "$DOSBASE/$gamedir/ExtIP.txt"
+            echo "$_locip" > "$DOSBASE/$gamedir/ExtIP2.txt"
+            unset _extip _locip _iface
+        fi
+    fi
+
+    clear
+
+    # Backward-compat vars for exception.bsh scripts (use ${dosbox}, ${conf}).
+    dosbox="${EXO_EMULATOR_CMD[*]}"
+    conf="./emulators/dosbox/options_macos.conf"
+
+    # macOS exception only — exception.bsh is Linux-specific (flatpak/Wine).
+    # Without exception.msh, fall through to standard DOSBox launch.
+    local exc
+    if [[ -f "$DOS_DIR/$gamedir/exception.sh" ]]; then
+        exc="$DOS_DIR/$gamedir/exception.sh"
+    elif [[ -f "$DOS_DIR/$gamedir/exception.msh" ]]; then
+        exc="$DOS_DIR/$gamedir/exception.msh"
+    fi
+    if [[ -n "$exc" ]] && [[ -f "$exc" ]]; then
+        cd "$EXO_DIR"
+        source "$exc"
+        # return 0 means exception handled the launch; non-zero means fall through
+        # (e.g. Linux-only Wine exception returns 1 on macOS so standard DOSBox runs)
+        [[ $? -eq 0 ]] && return
+    fi
+
+    # Standard launch: CWD=eXo/ so relative mount paths in dosbox_linux.conf resolve.
+    cd "$EXO_DIR"
+    "${EXO_EMULATOR_CMD[@]}" \
+        -conf "$DOS_DIR/$gamedir/dosbox_linux.conf" \
+        -conf "$EXO_DIR/emulators/dosbox/options_macos.conf" \
+        -nomenu -noconsole
+
+    # Cleanup DOSBox artefacts
+    rm -f stdout.txt stderr.txt
+    compgen -G 'glide.*' &>/dev/null && rm -f glide.*
+    [[ -f "$DOSBASE/CWSDPMI.swp" ]] && rm -f "$DOSBASE/CWSDPMI.swp"
+}
+
+# ── Main launch flow ──────────────────────────────────────────────────────────
+exo_check_deps
+_apply_sel_options
+
+lang_dir=""
+lang_cnt=0
+
+# Skip lang menu if no language pack preference files exist.
+if ! compgen -G "$EXO_UTIL/eXoDOS"*.lang &>/dev/null; then
+    lang_dir="english"
+    lang_cnt=1
+else
+    clear
+    printf "\nLanguage Selection\n\n"
+    _lang_menu || return
+fi
+
+if [[ "$lang_dir" == "english" ]]; then
+    if [[ ! -d "$DOSBASE/$gamedir" ]]; then
+        _prompt_install || return
+    fi
+    _launch_dosbox
+else
+    # Localised version: source its launcher from the localized !dos dir.
+    local_dir="$EXO_DIR/eXoDOS/!dos/${lang_dir}/${gamedir}"
+    if [[ ! -d "$EXO_DIR/eXoDOS/${lang_dir}/$gamedir" ]]; then
+        _prompt_install || return
+    fi
+    cd "$local_dir"
+    for f in *\).msh; do
+        source "$f"
+        break
+    done
+fi

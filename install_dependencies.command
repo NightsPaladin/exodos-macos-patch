@@ -1,0 +1,533 @@
+#!/usr/bin/env bash
+
+# Universal Dependency Setup For eXo Collections
+# Revised: 2024-08-26
+
+#--------------------------------------------------------------------------------------
+if [[ "$LD_PRELOAD" =~ "gameoverlayrenderer" ]]
+then
+    LD_PRELOAD=""
+fi
+clear
+
+setupversion="Version 6.04.universal1"
+
+[[ $0 == $BASH_SOURCE ]] && cd "$( dirname "$0")"
+scriptDir="$(cd "$( dirname "$BASH_SOURCE")" && pwd)"
+[ $# -gt 0 ] && parameterone="$1"
+[ $# -gt 1 ] && parametertwo="$2"
+[ $# -gt 2 ] && parameterthree="$3"
+[ $# -gt 3 ] && parameterfour="$4"
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]
+then
+    if [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "konsole" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "gnome-terminal-" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "xfce4-terminal" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "kgx" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "xterm" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "Eterm" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "x-terminal-emul" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"\
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "mate-terminal" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "terminator" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "urxvt" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "rxvt" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "termit" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "terminology" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "tilix" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "kitty" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `ps -o sid= -p "$$" | xargs ps -o ppid= -p | xargs ps -o comm= -p` = "aterm" ]
+    then
+        cd eXo/util
+        source "$scriptDir/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")"
+        exit 0
+    elif [ `which konsole` ]
+    then
+        konsole -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which gnome-terminal` ]
+    then
+        gnome-terminal -- /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which xfce4-terminal` ]
+    then
+        xfce4-terminal -x /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which kgx` ]
+    then
+        kgx -e "/usr/bin/env bash \"$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")\" $@" &
+        exit 0
+    elif [ `which xterm` ]
+    then
+        xterm -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which uxterm` ]
+    then
+        uxterm -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which eterm` ]
+    then
+        Eterm -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which x-terminal-emulator` ]
+    then
+        x-terminal-emulator -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which mate-terminal` ]
+    then
+        eval mate-terminal -e \"/usr/bin/env bash \\\"$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")\\\" $@\" "$@" &
+        exit 0
+    elif [ `which terminator` ]
+    then
+        terminator -x /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which urxvt` ]
+    then
+        urxvt -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which rxvt` ]
+    then
+        rxvt -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which termit` ]
+    then
+        termit -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which lxterm` ]
+    then
+        lxterm -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which terminology` ]
+    then
+        terminology -e "/usr/bin/env bash \"$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")\" $@" &
+        exit 0
+    elif [ `which tilix` ]
+    then
+        tilix -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which kitty` ]
+    then
+        kitty -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    elif [ `which aterm` ]
+    then
+        aterm -e /usr/bin/env bash "$PWD/eXo/util/$(basename -- "${BASH_SOURCE%.command}.bsh")" "$@" &
+        exit 0
+    else
+        exit ERRCODE "Weird system achievement unlocked: None of the 18 supported terminal emulators are installed."
+    fi
+
+    exit 0
+elif [[ "$OSTYPE" != "darwin"* ]]
+then
+    exit ERRCODE "OS not supported"
+fi
+
+if [ ! -d Content ]
+then
+    printf "\n\e[1;31;47mCannot find ./Content subdirectory.\e[0m\n\n"
+    read -s -n 1 -p "Press any key to abort."
+    printf "\n\n"
+    exit 1
+fi
+if [ ! -d "eXo/util" ]
+then
+    printf "\n\e[1;31;47mCannot find ./eXo/util subdirectory.\e[0m\n\n"
+    read -s -n 1 -p "Press any key to abort."
+    printf "\n\n"
+    exit 1
+fi
+if [[ $(ls -1 eXo/util/util*linux*.zip 2>/dev/null | wc -l) == 0 ]]
+then
+    printf "\n\e[1;31;47mCannot find ./eXo/util/util*linux*.zip.\e[0m\n\n"
+    read -s -n 1 -p "Press any key to abort."
+    printf "\n\n"
+    exit 1
+fi
+
+initialDir=$PWD
+
+function beginMac
+{
+    missingPackages=no
+    runupdate=no
+    distroeol=no
+    distroid="$(cat /etc/os-release 2>/dev/null | grep '^ID=' | sed -e 's/^ID=//')"
+    distroversion="$(cat /etc/os-release 2>/dev/null | grep '^VERSION_ID=' | sed -e 's/^VERSION_ID=//' | sed -e 's/"//g')"
+    distrolike="$(cat /etc/os-release 2>/dev/null | grep '^ID_LIKE=' | sed -e 's/^ID_LIKE=//')"
+    
+    clear
+    printf "\n\e[1;31;40mWelcome to the eXo Dependency Installer.\e[0m\n\n%s\n%s\n%s\n\n" \
+        "This setup will install the software required by the collection." \
+        "For this step to succeed, sudo access is required." \
+        "As such, you may be prompted for your password at various points."
+    printf "Please choose one of the following:\n\n%s\e[1;37;45m%s\e[0m%s\n%s\e[1;37;45m%s\e[0m%s\n%s\e[1;37;45m%s\e[0m%s\n\n" \
+        "[" "P" "]roceed with installation" "[" "D" "]ownload the latest setup" "[" "A" "]bort installation" 
+    while true
+    do
+        read -p "(P/D/A)? " choice
+        case $choice in
+            [Pp]* ) break;;
+            [Dd]* ) runupdate=yes
+                break;;
+            [Aa]* ) printf "\n"
+                exit 1
+                break;;
+            *   ) printf "Invalid input.\n";;
+        esac
+    done
+    
+    clear
+    
+    if [ $runupdate == yes ]
+    then
+        which -s brew &>/dev/null
+        [[ $? != 0 ]] && missingDep
+        which -s wget &>/dev/null
+        [[ $? != 0 ]] && missingDep
+        which -s sha256sum &>/dev/null
+        [[ $? != 0 ]] && missingDep
+        which -s unzip &>/dev/null
+        [[ $? != 0 ]] && missingDep
+        goupdate
+    fi
+    
+    echo ""
+    echo "Beginning dependency installation..."
+    echo ""
+
+    # ── Xcode Command Line Tools ──────────────────────────────────────────────
+    if ! xcode-select -p &>/dev/null; then
+        echo "Installing Xcode Command Line Tools..."
+        xcode-select --install
+        while ps -e | grep -q "Install Command Line Developer Tools"; do sleep 2; done
+    fi
+
+    # ── Homebrew ──────────────────────────────────────────────────────────────
+    if ! command -v brew &>/dev/null; then
+        echo "Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+
+    # Add Homebrew to PATH for the rest of this script and update shell profiles.
+    local brew_prefix
+    if [[ "$(uname -m)" == "arm64" ]]; then
+        brew_prefix="/opt/homebrew"
+        for rc in ~/.zprofile ~/.bash_profile; do
+            grep -qF "$brew_prefix/bin" "$rc" 2>/dev/null \
+                || { [[ -d "$brew_prefix/bin" ]] && echo "export PATH=$brew_prefix/bin:\$PATH" >> "$rc"; }
+        done
+    else
+        brew_prefix="/usr/local"
+        for rc in ~/.zprofile ~/.bash_profile; do
+            grep -qF "$brew_prefix/bin" "$rc" 2>/dev/null \
+                || echo "export PATH=$brew_prefix/bin:\$PATH" >> "$rc"
+        done
+    fi
+    eval "$("$brew_prefix/bin/brew" shellenv 2>/dev/null || true)"
+
+    # ── Rosetta 2 (Apple Silicon only) ───────────────────────────────────────
+    if [[ "$(uname -m)" == "arm64" ]]; then
+        if ! /usr/bin/pgrep -q oahd 2>/dev/null; then
+            echo "Installing Rosetta 2 (required for some legacy DOSBox binaries)..."
+            /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+        else
+            echo "Rosetta 2 already installed."
+        fi
+    fi
+
+    # ── All Homebrew packages ─────────────────────────────────────────────────
+    # CLI tools, emulators, and runtime libraries installed in one batch.
+    # gnu-sed installs as 'gsed'; findutils installs 'gfind'.
+    local -a BREW_PACKAGES=(
+        # CLI tools
+        aria2 bash coreutils gnu-sed findutils wget curl python3 unzip
+
+        # Emulators
+        dosbox-staging dosbox-x scummvm
+
+        # SDL2 stack (required by all DOSBox variants + ScummVM)
+        sdl2 sdl2_net sdl2_image
+
+        # Audio synthesis / decoding
+        fluid-synth opusfile speexdsp
+        libvorbis libogg flac
+        mad a52dec faad2 libmikmod
+
+        # Networking
+        libslirp libpcap
+
+        # Graphics / fonts
+        libpng freetype fribidi jpeg-turbo giflib
+
+        # Video codecs (ScummVM cutscenes)
+        libvpx theora libmpeg2
+    )
+
+    echo ""
+    echo "Updating Homebrew..."
+    brew update --quiet
+
+    echo ""
+    echo "Installing ${#BREW_PACKAGES[@]} packages (tools, emulators, runtime libraries)..."
+    echo "This may take several minutes on a first install."
+    echo ""
+    brew install "${BREW_PACKAGES[@]}"
+
+    # ── 86Box (cask) ─────────────────────────────────────────────────────────
+    # 86Box is a PC hardware emulator used by 4 games as an optional alternative
+    # to DOSBox: Dungeon Keeper, Falcon Gold, Privateer 2 SE, Wing Commander.
+    echo ""
+    echo "Installing 86Box (optional hardware emulator for 4 games)..."
+    brew install --cask 86box || echo "Note: 86Box cask install failed (non-fatal; the games still play via DOSBox)."
+
+    clear
+    printf "\nAll required dependencies are now satisfied.\n%s\e[1;33;40m%s\e[0m%s\n\n" \
+        "You may proceed with running the appropriate " "Setup eXo<collection>.command" " file."
+    read -s -n 1 -p "Press any key to exit..."
+    printf "\n\n"
+}
+
+function extractPackages
+{
+    cd eXo
+    unzip -o -q ./util/util\*_linux\*.zip EXT\*_linux\*.zip -d ./util
+    [ $? != 0 ] && failedunzip
+    unzip -o -q ./util/EXT\*_linux\*.zip Flatpaks/\* -d ./
+    [ $? != 0 ] && failedunzip
+    cd ..
+}
+
+function failedinstall
+{
+    printf "\n\e[1;31;47mAn error occurred while attempting to install packages.\e[0m\n\n%s\n\t%s\n\t%s\n\t%s\n\t%s\n\t%s\n\t%s\n\n" \
+        "Possible causes may include:" \
+        "- A lock held by automatic updates running in the background" \
+        "- Insufficient sudo access or user permissions" \
+        "- A problem with your package manager" \
+        "- A read-only filesystem" \
+        "- A zip file is corrupted" \
+        "- Your computer leading a rebellion against you"
+    printf "Sometimes the problem may resolve itself by rerunning this setup.\nFirst try that. If there is still a problem, consult the readme:\n%s\e[1;33;40m%s\e[0m%s\n\n" \
+        "\"" "./eXo<collection> Linux ReadMe.txt" "\""
+    read -s -n 1 -p "Press any key to abort."
+    printf "\n\n"
+    exit 1
+}
+
+function failedunzip
+{
+    printf "\n\e[1;31;47mFailed to unzip packages.\e[0m\n\n"
+    read -s -n 1 -p "Press any key to abort."
+    printf "\n\n"
+    exit 1
+}
+
+function goupdate
+{
+    clear
+    printf "\nChecking for updates...\n\n"
+    [ -e "ver_universal_linuxmac.txt" ] && rm ver_universal_linuxmac.txt
+    [ -e "install_dependencies.cnew" ] && rm install_dependencies.cnew
+    [ -e "install_dependencies.bnew" ] && rm install_dependencies.bnew
+    [ -e "update_universalpackages_linuxmac.zip" ] && rm update_universalpackages_linuxmac.zip
+    wget "https://github.com/exoscoriae/eXoDOS/raw/master/linux_mac/ver_universal_linuxmac.txt" -O ver_universal_linuxmac.txt
+    if [ ! -e "ver_universal_linuxmac.txt" ]
+    then
+        printf "\n\e[1;31;47mFailed to retrieve update information.\e[0m\n\n"
+        read -s -n 1 -p "Press any key to abort."
+        printf "\n\n"
+        exit 1
+    fi
+    updateversion="$(sed -n '1p' ver_universal_linuxmac.txt)"
+    universal_depmac_url="$(sed -n '2p' ver_universal_linuxmac.txt)"
+    universal_depmac_sum="$(sed -n '3p' ver_universal_linuxmac.txt)"
+    universal_deplin_url="$(sed -n '4p' ver_universal_linuxmac.txt)"
+    universal_deplin_sum="$(sed -n '5p' ver_universal_linuxmac.txt)"
+    universal_package_url="$(sed -n '6p' ver_universal_linuxmac.txt)"
+    universal_package_sum="$(sed -n '7p' ver_universal_linuxmac.txt)"
+    rm ver_universal_linuxmac.txt
+    clear
+    if [ "$setupversion" == "$updateversion" ]
+    then
+        printf "\nYou already have the latest version of the setup.\n\n"
+        read -s -n 1 -p "Press any key to close..."
+        printf "\n\n"
+        exit 0
+    else
+        printf "\n%s\e[1;37;40m%s\e[0m%s\n\n%s\t\t$setupversion\n%s\t$updateversion\n\n" \
+        "An update is " "available" "." "Local version: " "Available version: "
+        printf "%s\n\n%s\e[4;37;40m%s\e[0m%s\n\t%s\e[1;33;40m%s\e[0m%s\n\t%s\e[1;33;40m%s\e[0m%s\n\t%s\e[1;34;40m%s\e[0m%s\e[1;34;40m%s\e[0m%s\n\t%s\n\n" \
+            "Note that proceeding will ONLY update this setup and critical dependencies." \
+            "To update " "games" ", do one of the following after the packs are fully installed:" \
+            "- Direct (Linux): Run " "./eXo/Update/update.command " "(eXoDOS)"\
+            "- Direct (Linux): Run " "./eXo/Update/updateScummVM.command " "(eXoScummVM)"\
+            "- exogui (Linux): Select the " "Check for updates" " options on the " "Home" " tab" \
+            "- LaunchBox (Windows): Use normally documented method to update "
+            
+        read -s -n 1 -p "Press any key to continue..."
+        printf "\n\n"
+        wget "$universal_depmac_url" -O install_dependencies.cnew
+        if [ ! -e "install_dependencies.cnew" ]
+        then
+            printf "\n\e[1;31;47mFailed to download dependency setup.\e[0m\n\n"
+            read -s -n 1 -p "Press any key to abort."
+            printf "\n\n"
+            exit 1
+        fi
+        echo "$universal_depmac_sum" | sha256sum --check
+        if [ $? != 0 ]
+        then
+            rm install_dependencies.cnew
+            printf "\n\e[1;31;47mChecksum for downloaded file invalid.\e[0m\n\n"
+            read -s -n 1 -p "Press any key to abort."
+            printf "\n\n"
+            exit 1
+        else
+            mv install_dependencies.cnew install_dependencies.command
+            if [ $? != 0 ]
+            then
+                printf "\n\e[1;31;47mError replacing install_dependencies.command.\e[0m\n\n"
+                read -s -n 1 -p "Press any key to abort."
+                printf "\n\n"
+                exit 1
+            fi
+            chmod +x install_dependencies.command
+            if [ $? != 0 ]
+            then
+                printf "\n\e[1;31;47mError making install_dependencies.command executable.\e[0m\n\n"
+                read -s -n 1 -p "Press any key to abort."
+                printf "\n\n"
+                exit 1
+            fi
+        fi
+        wget "$universal_deplin_url" -O install_dependencies.bnew
+        if [ ! -e "install_dependencies.bnew" ]
+        then
+            printf "\n\e[1;31;47mFailed to download dependency setup.\e[0m\n\n"
+            read -s -n 1 -p "Press any key to abort."
+            printf "\n\n"
+            exit 1
+        fi
+        echo "$universal_deplin_sum" | sha256sum --check
+        if [ $? != 0 ]
+        then
+            rm install_dependencies.bnew
+            printf "\n\e[1;31;47mChecksum for downloaded file invalid.\e[0m\n\n"
+            read -s -n 1 -p "Press any key to abort."
+            printf "\n\n"
+            exit 1
+        else
+            mv install_dependencies.bnew eXo/util/install_dependencies.bsh
+            if [ $? != 0 ]
+            then
+                printf "\n\e[1;31;47mError replacing install_dependencies.bsh.\e[0m\n\n"
+                read -s -n 1 -p "Press any key to abort."
+                printf "\n\n"
+                exit 1
+            fi
+        fi
+        wget "$universal_package_url" -O update_universalpackages_linuxmac.zip
+        if [ ! -e "update_universalpackages_linuxmac.zip" ]
+        then
+            printf "\n\e[1;31;47mFailed to download packages.\e[0m\n\n"
+            read -s -n 1 -p "Press any key to abort."
+            printf "\n\n"
+            exit 1
+        fi
+        echo "$universal_package_sum" | sha256sum --check
+        if [ $? != 0 ]
+        then
+            rm update_universalpackages_linuxmac.zip
+            printf "\n\e[1;31;47mChecksum for downloaded file invalid.\e[0m\n\n"
+            read -s -n 1 -p "Press any key to abort."
+            printf "\n\n"
+            exit 1
+        fi
+        unzip -o update_universalpackages_linuxmac.zip -d ./
+        if [ $? != 0 ]
+        then
+            printf "\n\e[1;31;47mFailed to unzip update.\e[0m\n\n"
+            read -s -n 1 -p "Press any key to abort."
+            printf "\n\n"
+            exit 1
+        fi
+        rm update_universalpackages_linuxmac.zip
+        clear
+        printf "\nUpdate completed successfully.\n\n%s\n\n" \
+            "Run this setup again for new features and added package / distribution support."
+        read -s -n 1 -p "Press any key to close..."
+        printf "\n\n"
+        exit 0
+    fi
+}
+
+function missingDep
+{
+    echo ""
+    echo "Missing dependencies needed for update. Please install the dependencies first!"
+    read -s -n 1 -p "Press any key to abort."
+    exit 1
+}
+
+beginMac
